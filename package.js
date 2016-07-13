@@ -48,16 +48,13 @@ const specs = {
     // Top-level
     compile:                    runMultiple([
                                   'node package',
-                                  'rm -rf ./lib ./libEs6 ./libEs6_flow',
+                                  'rm -rf ./lib ./libEs6',
                                   'babel -d lib src',
-                                  // 'babel --no-babelrc --plugins transform-flow-strip-types -d libEs6 src',
-                                  // 'cp -r src libEs6_flow',
                                   'cp -r src libEs6',
                                 ]),
     docs:                       'extract-docs --template docs/templates/README.md --output README.md',
     build:                      runMultiple([
                                   'npm run lint',
-                                  // 'npm run flow',
                                   'npm run compile',
                                   // 'npm run test',
                                   'npm run docs',
@@ -70,8 +67,6 @@ const specs = {
 
     // Static analysis
     lint:                       'eslint src',
-    flow:                       'flow && test $? -eq 0 -o $? -eq 2',
-    flowStop:                   'flow stop',
     xxl:                        'xxl --src \"[\\\"src\\\"]\"',
 
     // Testing - general
@@ -118,13 +113,11 @@ const specs = {
     'extract-docs': '^1.0.0',
     'xxl': '^0.1.0',
     'cross-env': '^1.0.7',
-    'flow-bin': '^0.22.1',
 
     // Babel (except babel-eslint)
     'babel-cli': '^6.6.5',
     'babel-core': '^6.7.2',
     'babel-polyfill': '^6.7.2',
-    'babel-plugin-transform-flow-strip-types': '^6.7.0',
     'babel-preset-es2015': '^6.6.0',
     'babel-preset-stage-2': '^6.5.0',
     'babel-preset-react': '^6.5.0',
@@ -132,7 +125,6 @@ const specs = {
     // Linting
     'eslint': '^2.4.0',
     'eslint-config-airbnb': '^9.0.0',
-    'eslint-plugin-flowtype': '^2.2.2',
     'eslint-plugin-react': '^5.1.1',
     'eslint-plugin-jsx-a11y': '^1.2.2',
     'eslint-plugin-import': '^1.8.0',
