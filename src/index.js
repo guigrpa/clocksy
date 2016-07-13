@@ -48,10 +48,10 @@ class ClocksyServer {
 // ClocksyClient
 //-------------------------------------
 /* --
-### Server
+### Client
 
-Example usage with socket.io: just call `ClocksyServer.processRequest()`
-and return the result to the client as fast as you can:
+Enable/disable automatic requests by using `ClocksyServer.start|stop()`
+and pass any response you get from the server to Clocksy, as fast as you can:
 
 ```js
 import { ClocksyClient } from 'clocksy'; // const { ClocksyClient } = require('clocksy');
@@ -59,6 +59,9 @@ import { ClocksyClient } from 'clocksy'; // const { ClocksyClient } = require('c
 const socket = socketio.connect(url);
 const clocksy = new ClocksyClient({
   sendRequest: req => socket.emit('MSG', { type: 'CLOCKSY', data: req }),
+  // Other parameters and their default values:
+  // alpha: 0.2,  // higher levels accelerate convergence but decrease accuracy
+  // updatePeriod: 10000,  // [ms] how often should Clocksy estimate clock error
 });
 socket.on('connect', () => clocksy.start());
 socket.on('disconnect', () => clocksy.stop());
@@ -83,7 +86,7 @@ class ClocksyClient {
     this.timer = null;
     this.alpha = alpha;
     this.updatePeriod = updatePeriod;
-    this.sendRequest = sendRequest || function () {};
+    this.sendRequest = sendRequest || (() => {});
   }
 
   createRequest() {
@@ -129,9 +132,9 @@ class ClocksyClient {
   }
 }
 
-// -------------------------------------
+//-------------------------------------
 // API
-// -------------------------------------
+//-------------------------------------
 export {
   ClocksyClient,
   ClocksyServer,
