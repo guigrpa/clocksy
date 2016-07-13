@@ -34,7 +34,7 @@ socket.on('MSG', msg => {
   if (type === 'CLOCKSY') {
     socket.emit('MSG', {
       type: 'CLOCKSY',
-      data: clocksy.processRequest(msg.data),
+      data: clocksy.processRequest(data),
     });
     return;
   }
@@ -62,10 +62,13 @@ socket.on('disconnect', () => clocksy.stop());
 socket.on('MSG', msg => {
   const { type, data } = msg;
   if (type === 'CLOCKSY') {
-    const tDelta = clocksy.processResponse(msg.data);
+    const tDelta = clocksy.processResponse(data);
     // tDelta is the estimated server time minus the local time.
-    // Use this delta for whatever purpose you want
-    // (you can also get it later on with clocksy.getDelta())
+    // Use this delta for whatever purpose you want, e.g.
+    // correcting the local time for graphs or changing the timestamps
+    // of data downloaded from the server...
+    // If you don't need the delta immediately, you can also obtain it later
+    // calling clocksy.getDelta())
     return;
   }
 });
