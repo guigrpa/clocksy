@@ -64,7 +64,7 @@ socket.on('MSG', msg => {
   if (type === 'CLOCKSY') {
     const tDelta = clocksy.processResponse(msg.data);
     // tDelta is the estimated server time minus the local time.
-    // Use this dekta for whatever purpose you want
+    // Use this delta for whatever purpose you want
     // (you can also get it later on with clocksy.getDelta())
     return;
   }
