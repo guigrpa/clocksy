@@ -120,7 +120,6 @@ const specs = {
     'babel-polyfill': '^6.7.2',
     'babel-preset-es2015': '^6.6.0',
     'babel-preset-stage-2': '^6.5.0',
-    'babel-preset-react': '^6.5.0',
 
     // Linting
     'eslint': '^2.4.0',
