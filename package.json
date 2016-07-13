@@ -1,0 +1,75 @@
+{
+  "name": "clocksy",
+  "version": "1.0.0",
+  "description": "Transport-agnostic client-server clock synchronization",
+  "main": "lib/index.js",
+  "author": "Guillermo Grau Panea",
+  "license": "MIT",
+  "keywords": [
+    "clock",
+    "synchronization",
+    "sync",
+    "rtt"
+  ],
+  "homepage": "https://github.com/guigrpa/clocksy#readme",
+  "bugs": {
+    "url": "https://github.com/guigrpa/clocksy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guigrpa/clocksy.git"
+  },
+  "scripts": {
+    "compile": "node package && rm -rf ./lib ./libEs6 ./libEs6_flow && babel -d lib src && cp -r src libEs6",
+    "docs": "extract-docs --template docs/templates/README.md --output README.md",
+    "build": "npm run lint && npm run compile && npm run docs && npm run xxl",
+    "travis": "npm run compile",
+    "lint": "eslint src",
+    "flow": "flow && test $? -eq 0 -o $? -eq 2",
+    "flowStop": "flow stop",
+    "xxl": "xxl --src \"[\\\"src\\\"]\"",
+    "test": "npm run testCovFull",
+    "testCovFull": "npm run testCovPrepare && npm run testDev && npm run testProd && npm run testCovReport",
+    "testCovFast": "npm run testCovPrepare && npm run testDev && npm run testCovReport",
+    "ava": "ava --watch",
+    "testCovPrepare": "rm -rf ./coverage .nyc_output .nyc_tmp && mkdir .nyc_tmp",
+    "testDev": "cross-env NODE_ENV=development nyc ava && mv .nyc_output/* .nyc_tmp/",
+    "testProd": "cross-env NODE_ENV=production nyc ava && mv .nyc_output/* .nyc_tmp/",
+    "testCovReport": "cp .nyc_tmp/* .nyc_output/ && nyc report --reporter=html --reporter=lcov --reporter=text"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "dependencies": {
+    "timm": "1.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.14.0",
+    "babel-cli": "^6.6.5",
+    "babel-core": "^6.7.2",
+    "babel-eslint": "^6.0.0",
+    "babel-plugin-transform-flow-strip-types": "^6.7.0",
+    "babel-polyfill": "^6.7.2",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-2": "^6.5.0",
+    "coveralls": "^2.11.6",
+    "cross-env": "^1.0.7",
+    "eslint": "^2.4.0",
+    "eslint-config-airbnb": "^9.0.0",
+    "eslint-plugin-flowtype": "^2.2.2",
+    "eslint-plugin-import": "^1.8.0",
+    "eslint-plugin-jsx-a11y": "^1.2.2",
+    "eslint-plugin-react": "^5.1.1",
+    "extract-docs": "^1.0.0",
+    "flow-bin": "^0.22.1",
+    "nyc": "^6.1.1",
+    "xxl": "^0.1.0"
+  },
+  "ava": {
+    "files": [
+      "./test/test.js"
+    ],
+    "babel": "inherit"
+  }
+}

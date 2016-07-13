@@ -1,0 +1,29 @@
+parser: babel-eslint
+extends: airbnb
+plugins:
+  - flowtype
+rules:
+  eqeqeq:
+    - error
+    - allow-null
+  no-unused-expressions:
+    - error
+    - allowShortCircuit: true
+  no-use-before-define: off
+  no-multi-spaces: off
+  no-nested-ternary: off
+  no-cond-assign:
+    - error
+    - except-parens
+  key-spacing:
+    - warn
+    - 
+      beforeColon: false
+      afterColon: true
+      mode: 'minimum'
+  react/sort-comp: off
+  react/jsx-first-prop-new-line: off
+  react/jsx-indent: off
+  react/jsx-indent-props: off
+  react/jsx-closing-bracket-location: off
+  no-underscore-dangle: off
