@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Clocksy by guigrpa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Clocksy</h1>
+      <h2 class="project-tagline">Transport-agnostic client-server clock synchronization</h2>
+      <a href="https://github.com/guigrpa/clocksy" class="btn">View on GitHub</a>
+      <a href="https://github.com/guigrpa/clocksy/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/guigrpa/clocksy/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="clocksy-" class="anchor" href="#clocksy-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>clocksy <a href="https://www.npmjs.com/package/clocksy"><img src="https://img.shields.io/npm/v/clocksy.svg" alt="npm version"></a>
+</h1>
+
+<p>Transport-agnostic client-server clock synchronization.</p>
+
+<h2>
+<a id="why" class="anchor" href="#why" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Why?</h2>
+
+<ul>
+<li>Simplicity</li>
+<li>Automatic requests, typically converging to few ms</li>
+<li>Transport-agnostic: use it with HTTP, WebSockets, MQTT, whatever.</li>
+</ul>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
+
+<pre><code>$ npm install --save clocksy
+</code></pre>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a id="server" class="anchor" href="#server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Server</h3>
+
+<p>Example usage with socket.io: just call <code>ClocksyServer.processRequest()</code>
+and return the result to the client as fast as you can:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">import</span> { <span class="pl-smi">ClocksyServer</span> } <span class="pl-k">from</span> <span class="pl-s"><span class="pl-pds">'</span>clocksy<span class="pl-pds">'</span></span>; <span class="pl-c">// const { ClocksyServer } = require('clocksy');</span>
+
+<span class="pl-k">const</span> <span class="pl-c1">clocksy</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">ClocksyServer</span>();
+<span class="pl-c">// ...</span>
+<span class="pl-smi">socket</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>MSG<span class="pl-pds">'</span></span>, <span class="pl-smi">msg</span> <span class="pl-k">=&gt;</span> {
+  <span class="pl-k">const</span> { <span class="pl-c1">type</span>, <span class="pl-c1">data</span> } <span class="pl-k">=</span> msg;
+  <span class="pl-k">if</span> (type <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>CLOCKSY<span class="pl-pds">'</span></span>) {
+    <span class="pl-smi">socket</span>.<span class="pl-en">emit</span>(<span class="pl-s"><span class="pl-pds">'</span>MSG<span class="pl-pds">'</span></span>, {
+      type<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>CLOCKSY<span class="pl-pds">'</span></span>,
+      data<span class="pl-k">:</span> <span class="pl-smi">clocksy</span>.<span class="pl-en">processRequest</span>(<span class="pl-smi">msg</span>.<span class="pl-c1">data</span>),
+    });
+    <span class="pl-k">return</span>;
+  }
+  <span class="pl-c">// ...</span>
+})</pre></div>
+
+<h3>
+<a id="client" class="anchor" href="#client" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Client</h3>
+
+<p>Enable/disable automatic requests by using <code>ClocksyServer.start|stop()</code>
+and pass any response you get from the server to Clocksy, as fast as you can:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">import</span> { <span class="pl-smi">ClocksyClient</span> } <span class="pl-k">from</span> <span class="pl-s"><span class="pl-pds">'</span>clocksy<span class="pl-pds">'</span></span>; <span class="pl-c">// const { ClocksyClient } = require('clocksy');</span>
+
+<span class="pl-k">const</span> <span class="pl-c1">socket</span> <span class="pl-k">=</span> <span class="pl-smi">socketio</span>.<span class="pl-en">connect</span>(url);
+<span class="pl-k">const</span> <span class="pl-c1">clocksy</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">ClocksyClient</span>({
+  <span class="pl-en">sendRequest</span><span class="pl-k">:</span> <span class="pl-smi">req</span> <span class="pl-k">=&gt;</span> <span class="pl-smi">socket</span>.<span class="pl-en">emit</span>(<span class="pl-s"><span class="pl-pds">'</span>MSG<span class="pl-pds">'</span></span>, { type<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>CLOCKSY<span class="pl-pds">'</span></span>, data<span class="pl-k">:</span> req }),
+  <span class="pl-c">// Other parameters and their default values:</span>
+  <span class="pl-c">// alpha: 0.2,  // higher levels accelerate convergence but decrease accuracy</span>
+  <span class="pl-c">// updatePeriod: 10000,  // [ms] how often should Clocksy estimate clock error</span>
+});
+<span class="pl-smi">socket</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>connect<span class="pl-pds">'</span></span>, () <span class="pl-k">=&gt;</span> <span class="pl-smi">clocksy</span>.<span class="pl-c1">start</span>());
+<span class="pl-smi">socket</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>disconnect<span class="pl-pds">'</span></span>, () <span class="pl-k">=&gt;</span> <span class="pl-smi">clocksy</span>.<span class="pl-c1">stop</span>());
+<span class="pl-smi">socket</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>MSG<span class="pl-pds">'</span></span>, <span class="pl-smi">msg</span> <span class="pl-k">=&gt;</span> {
+  <span class="pl-k">const</span> { <span class="pl-c1">type</span>, <span class="pl-c1">data</span> } <span class="pl-k">=</span> msg;
+  <span class="pl-k">if</span> (type <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>CLOCKSY<span class="pl-pds">'</span></span>) {
+    <span class="pl-k">const</span> <span class="pl-c1">tDelta</span> <span class="pl-k">=</span> <span class="pl-smi">clocksy</span>.<span class="pl-en">processResponse</span>(<span class="pl-smi">msg</span>.<span class="pl-c1">data</span>);
+    <span class="pl-c">// tDelta is the estimated server time minus the local time.</span>
+    <span class="pl-c">// Use this delta for whatever purpose you want</span>
+    <span class="pl-c">// (you can also get it later on with clocksy.getDelta())</span>
+    <span class="pl-k">return</span>;
+  }
+});</pre></div>
+
+<h2>
+<a id="changelog" class="anchor" href="#changelog" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="https://github.com/guigrpa/clocksy/blob/master/CHANGELOG.md">Changelog</a>
+</h2>
+
+<h2>
+<a id="license-mit" class="anchor" href="#license-mit" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License (MIT)</h2>
+
+<p>Copyright (c) <a href="https://github.com/guigrpa">Guillermo Grau Panea</a> 2016</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/guigrpa/clocksy">Clocksy</a> is maintained by <a href="https://github.com/guigrpa">guigrpa</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
