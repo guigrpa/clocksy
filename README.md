@@ -2,6 +2,10 @@
 
 Transport-agnostic client-server clock synchronization.
 
+Maybe your client application merges real-time streams from a server with locally-generated data (e.g. [storyboard](https://github.com/guigrpa/storyboard) logs). Or you want to determine just what the server thinks it is "now", so that you can correctly graph real-time values.
+
+Client or server might not be NTP-synchronized, even these days. If that's the case, you may find Clocksy useful and unobtrusive.
+
 
 ## Why?
 
