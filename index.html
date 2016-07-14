@@ -29,9 +29,16 @@
 <a id="why" class="anchor" href="#why" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Why?</h2>
 
 <ul>
-<li>Simplicity</li>
-<li>Automatic requests, typically converging to few ms</li>
-<li>Transport-agnostic: use it with HTTP, WebSockets, MQTT, whatever.</li>
+<li>
+<strong>Simple algorithm</strong>: timestamp at the client, timestamp at the server and send back, measure round-trip time, estimate server time and apply an <a href="https://en.wikipedia.org/wiki/Infinite_impulse_response">IIR filter</a> to improve accuracy over time.</li>
+<li>
+<strong>Transport-agnostic</strong>: use it on top of your own transport layer: HTTP, WebSockets, MQTT, whatever.</li>
+<li>
+<strong>Simple implementation</strong>: since it leaves transport on the user's hands, it is exactly 5 LOCs for the server, ~70 for the client.</li>
+<li>
+<strong>Automatic requests</strong>, typically converging to &lt; 10 ms in a few iterations.</li>
+<li>
+<strong>Automatic background tab detection</strong>: Chrome goes bonkers with –sorry, optimizes– timers on background tabs, interfering with clocksy's algorithm. Automatic clock updates are switched off while a tab is hidden.</li>
 </ul>
 
 <h2>
@@ -58,7 +65,7 @@ and return the result to the client as fast as you can:</p>
   <span class="pl-k">if</span> (type <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>CLOCKSY<span class="pl-pds">'</span></span>) {
     <span class="pl-smi">socket</span>.<span class="pl-en">emit</span>(<span class="pl-s"><span class="pl-pds">'</span>MSG<span class="pl-pds">'</span></span>, {
       type<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>CLOCKSY<span class="pl-pds">'</span></span>,
-      data<span class="pl-k">:</span> <span class="pl-smi">clocksy</span>.<span class="pl-en">processRequest</span>(<span class="pl-smi">msg</span>.<span class="pl-c1">data</span>),
+      data<span class="pl-k">:</span> <span class="pl-smi">clocksy</span>.<span class="pl-en">processRequest</span>(data),
     });
     <span class="pl-k">return</span>;
   }
@@ -85,13 +92,24 @@ and pass any response you get from the server to Clocksy, as fast as you can:</p
 <span class="pl-smi">socket</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>MSG<span class="pl-pds">'</span></span>, <span class="pl-smi">msg</span> <span class="pl-k">=&gt;</span> {
   <span class="pl-k">const</span> { <span class="pl-c1">type</span>, <span class="pl-c1">data</span> } <span class="pl-k">=</span> msg;
   <span class="pl-k">if</span> (type <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>CLOCKSY<span class="pl-pds">'</span></span>) {
-    <span class="pl-k">const</span> <span class="pl-c1">tDelta</span> <span class="pl-k">=</span> <span class="pl-smi">clocksy</span>.<span class="pl-en">processResponse</span>(<span class="pl-smi">msg</span>.<span class="pl-c1">data</span>);
+    <span class="pl-k">const</span> <span class="pl-c1">tDelta</span> <span class="pl-k">=</span> <span class="pl-smi">clocksy</span>.<span class="pl-en">processResponse</span>(data);
     <span class="pl-c">// tDelta is the estimated server time minus the local time.</span>
-    <span class="pl-c">// Use this delta for whatever purpose you want</span>
-    <span class="pl-c">// (you can also get it later on with clocksy.getDelta())</span>
+    <span class="pl-c">// Use this delta for whatever purpose you want, e.g.</span>
+    <span class="pl-c">// correcting the local time for graphs or changing the timestamps</span>
+    <span class="pl-c">// of data downloaded from the server...</span>
+    <span class="pl-c">// If you don't need the delta immediately, you can also obtain it later</span>
+    <span class="pl-c">// calling clocksy.getDelta())</span>
     <span class="pl-k">return</span>;
   }
 });</pre></div>
+
+<h2>
+<a id="related" class="anchor" href="#related" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Related</h2>
+
+<ul>
+<li>
+<a href="https://github.com/enmasseio/timesync">timesync</a>: provides more functionalities, but is apparently more complex.</li>
+</ul>
 
 <h2>
 <a id="changelog" class="anchor" href="#changelog" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="https://github.com/guigrpa/clocksy/blob/master/CHANGELOG.md">Changelog</a>
