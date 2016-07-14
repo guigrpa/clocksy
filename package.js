@@ -5,9 +5,9 @@
 // Basic config
 // ===============================================
 const NAME = 'clocksy';
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 const DESCRIPTION = 'Transport-agnostic client-server clock synchronization';
-const KEYWORDS = ['clock', 'synchronization', 'sync', 'rtt'];
+const KEYWORDS = ['clock', 'time', 'synchronization', 'sync', 'rtt', 'client', 'server', 'ntp'];
 
 // ===============================================
 // Helpers

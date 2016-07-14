@@ -1,15 +1,19 @@
 {
   "name": "clocksy",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Transport-agnostic client-server clock synchronization",
   "main": "lib/index.js",
   "author": "Guillermo Grau Panea",
   "license": "MIT",
   "keywords": [
     "clock",
+    "time",
     "synchronization",
     "sync",
-    "rtt"
+    "rtt",
+    "client",
+    "server",
+    "ntp"
   ],
   "homepage": "https://github.com/guigrpa/clocksy#readme",
   "bugs": {

@@ -5,9 +5,11 @@ Transport-agnostic client-server clock synchronization.
 
 ## Why?
 
-* Simplicity
-* Automatic requests, typically converging to few ms
-* Transport-agnostic: use it with HTTP, WebSockets, MQTT, whatever.
+* **Simple algorithm**: timestamp at the client, timestamp at the server and send back, measure round-trip time, estimate server time and apply an [IIR filter](https://en.wikipedia.org/wiki/Infinite_impulse_response) to improve accuracy over time.
+* **Transport-agnostic**: use it on top of your own transport layer: HTTP, WebSockets, MQTT, whatever.
+* **Simple implementation**: since it leaves transport on the user's hands, it is exactly 5 LOCs for the server, ~70 for the client.
+* **Automatic requests**, typically converging to < 10 ms in a few iterations.
+* **Automatic background tab detection**: Chrome goes bonkers with –sorry, optimizes– timers on background tabs, interfering with clocksy's algorithm. Automatic clock updates are switched off while a tab is hidden.
 
 
 ## Installation
@@ -20,6 +22,11 @@ $ npm install --save clocksy
 ## Usage
 
 [[[./src/index.js]]]
+
+
+## Related
+
+* [timesync](https://github.com/enmasseio/timesync): provides more functionalities, but is apparently more complex.
 
 
 ## [Changelog](https://github.com/guigrpa/clocksy/blob/master/CHANGELOG.md)
