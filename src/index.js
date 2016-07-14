@@ -87,10 +87,23 @@ class ClocksyClient {
     sendRequest,
   } = {}) {
     this.tDelta = null;
+    this.rtt = null;
     this.timer = null;
     this.alpha = alpha;
     this.updatePeriod = updatePeriod;
     this.sendRequest = sendRequest || (() => {});
+
+    // Keep track of the tab's shown/hidden status. Chrome
+    // goes bonkers with the timers in hidden windows, so RTT
+    // calculations are not reliable. Automatic requests are
+    // not sent while the tab is hidden.
+    this.fHiddenTab = false;
+    try {
+      this.fHiddenTab = document.hidden;
+      document.addEventListener('visibilitychange', () => {
+        this.fHiddenTab = document.hidden; // change tab text for demo
+      });
+    } catch (err) { /* ignore */ }
   }
 
   createRequest() {
@@ -103,6 +116,7 @@ class ClocksyClient {
     const rtt = tRx - tTx;
     const tDelta = tServer - (rtt / 2) - tTx;
     this.tDelta = this.calcNewDelta(tDelta);
+    this.rtt = rtt;
     return this.tDelta;
   }
 
@@ -113,13 +127,12 @@ class ClocksyClient {
       tDelta;
   }
 
-  getDelta() {
-    return this.tDelta;
-  }
+  getDelta() { return this.tDelta; }
+  getRtt() { return this.rtt; }
 
   start() {
     if (this.timer != null) this.stop();
-    this.sendAutoRequest();
+    this.sendAutoRequest(true);
     this.timer = setInterval(this.sendAutoRequest.bind(this),
       this.updatePeriod);
   }
@@ -130,7 +143,8 @@ class ClocksyClient {
     this.timer = null;
   }
 
-  sendAutoRequest() {
+  sendAutoRequest(fForce) {
+    if (this.fHiddenTab && !fForce) return;
     const req = this.createRequest();
     this.sendRequest(req);
   }
